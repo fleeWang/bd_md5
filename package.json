@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "node index.js",
     "test": "node test.js",
+    "mkdir": "node mkdir.js",
+    "download": "node download.js",
     "start": "nodemon"
   },
   "author": "fleeWang",

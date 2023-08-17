@@ -1,5 +1,4 @@
 const fs = require("fs");
-var request = require("request");
 fs.readFile("./a.log", "utf8", (err, data) => {
   if (err) {
     return console.log("文件读取失败，失败原因是：" + err);
@@ -7,20 +6,9 @@ fs.readFile("./a.log", "utf8", (err, data) => {
   const regex = /Tiles_BIGEMAP\\\\(\S*)\\\\(\S*)\\\\(\S*)\.png/;
   const matches = matchAll(data, regex);
   const arr = matches.map((m) => [m[1], m[2], m[3]]);
-  console.log(arr);
-
-  // arr.forEach((path) => {
-  //   var fliename = __dirname + `/map/${path[0]}/${path[1]}`;
-  //   fs.mkdir(fliename, { recursive: true }, (err) => err);
-  // });
   arr.forEach((path) => {
     var fliename = __dirname + `/map/${path[0]}/${path[1]}`;
-    request("https://www.baidu.com/img/flexible/logo/pc/result.png")
-      .on("error", (e) => console.log(`${fliename}/${path[2]}.png`))
-      .pipe(
-        fs.createWriteStream(`${fliename}/${path[2]}.png`, { autoClose: true })
-      )
-      .on("error", (e) => console.log(`${fliename}/${path[2]}.png`));
+    fs.mkdir(fliename, { recursive: true }, (err) => err);
   });
 });
 function matchAll(data, exp) {
