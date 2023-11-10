@@ -7,18 +7,27 @@ fs.readFile("./a.log", "utf8", (err, data) => {
   const regex = /Tiles_BIGEMAP\\\\(\S*)\\\\(\S*)\\\\(\S*)\.png/;
   const matches = matchAll(data, regex);
   const arr = matches.map((m) => [m[1], m[2], m[3]]);
-  arr.forEach((path) => {
-    var fliename = __dirname + `/map/${path[0]}/${path[1]}`;
-    request(
-      `http://localhost:8888/customimage/tile?qt=customimage&x=${path[1]}&y=${path[2]}&z=${path[0]}`
-    )
-      .on("error", (e) => console.log(`${fliename}/${path[2]}.png`))
-      .pipe(
-        fs.createWriteStream(`${fliename}/${path[2]}.png`, { autoClose: true })
-      )
-      .on("error", (e) => console.log(`${fliename}/${path[2]}.png`));
-  });
+  download(0, arr);
 });
+
+function download(index, arr) {
+  if (index == arr.length) {
+    return;
+  }
+  const path = arr[index];
+  var fliename = __dirname + `/map/${path[0]}/${path[1]}`;
+  request(
+    `http://localhost:8888/customimage/tile?qt=customimage&x=${path[1]}&y=${path[2]}&z=${path[0]}`
+  )
+    .pipe(
+      fs.createWriteStream(`${fliename}/${path[2]}.png`, { autoClose: true })
+    )
+    .on("close", () => {
+      console.log(`download：${fliename}/${path[2]}.png`);
+      download(index + 1, arr);
+    });
+}
+
 function matchAll(data, exp) {
   var regex = exp;
   var Regex = new RegExp(regex, "mg");
